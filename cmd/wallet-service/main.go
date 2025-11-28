@@ -19,13 +19,13 @@ func main() {
 
 	dsn := config.DSNFromEnv()
 
-	conn, err := db.Connect(context.Background(), dsn)
+	pool, err := db.Connect(context.Background(), dsn)
 	if err != nil {
 		log.Fatalf("failed to connect to db: %v", err)
 	}
-	defer conn.Close(context.Background())
+	defer pool.Close()
 
-	srv := server.NewServer(conn)
+	srv := server.NewServer(pool)
 
 	go func() {
 		log.Printf("starting wallet service on %s", config.GetAppPort())

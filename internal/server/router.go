@@ -8,17 +8,17 @@ import (
 	"wallet-service/internal/repository/pgrepo"
 	"wallet-service/internal/usecase"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Server struct {
 	serv *http.Server
 }
 
-func NewServer(conn *pgx.Conn) *Server {
+func NewServer(pool *pgxpool.Pool) *Server {
 	mux := http.NewServeMux()
 
-	repo := pgrepo.NewWalletRepository(conn)
+	repo := pgrepo.NewWalletRepository(pool)
 	uc := usecase.NewWalletUseCase(repo)
 	h := NewHandlers(uc)
 
@@ -32,7 +32,8 @@ func NewServer(conn *pgx.Conn) *Server {
 			ReadTimeout:  5 * time.Second,
 			WriteTimeout: 10 * time.Second,
 			IdleTimeout:  60 * time.Second,
-		}}
+		},
+	}
 }
 
 func (s *Server) Run() error {

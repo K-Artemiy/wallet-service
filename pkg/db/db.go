@@ -3,9 +3,9 @@ package db
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func Connect(ctx context.Context, dsn string) (*pgx.Conn, error) {
-	return pgx.Connect(ctx, dsn)
+func Connect(ctx context.Context, dsn string) (*pgxpool.Pool, error) {
+	return pgxpool.New(ctx, dsn)
 }
