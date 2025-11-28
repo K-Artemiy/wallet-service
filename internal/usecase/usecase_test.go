@@ -11,7 +11,7 @@ import (
 	"wallet-service/internal/repository"
 )
 
-// mockRepo эмулирует репозиторий в памяти.
+// Эмулируем репозиторий в памяти.
 type mockRepo struct {
 	wallets map[uuid.UUID]*model.Wallet
 	inTx    bool
@@ -24,8 +24,6 @@ func newMockRepo() *mockRepo {
 	}
 }
 
-// BeginTransaction в тестах просто помечает, что мы "в транзакции",
-// и возвращает тот же самый репозиторий.
 func (m *mockRepo) BeginTransaction(ctx context.Context) (repository.WalletRepository, error) {
 	m.inTx = true
 	return m, nil
@@ -46,7 +44,6 @@ func (m *mockRepo) GetWalletForUpdate(ctx context.Context, id uuid.UUID) (*model
 	if !ok {
 		return nil, errors.New("no rows in result set")
 	}
-	// Возвращаем копию, чтобы не светить внутренний указатель наружу.
 	return &model.Wallet{WalletID: w.WalletID, Balance: w.Balance}, nil
 }
 
@@ -99,7 +96,6 @@ func TestProcessOperation_WithdrawSuccess(t *testing.T) {
 	ctx := context.Background()
 	id := uuid.New()
 
-	// Сначала пополним кошелёк
 	_, err := uc.ProcessOperation(ctx, id, model.OperationDeposit, 10000)
 	if err != nil {
 		t.Fatalf("unexpected error on deposit: %v", err)
@@ -120,13 +116,12 @@ func TestProcessOperation_WithdrawSuccess(t *testing.T) {
 	}
 }
 
-func TestProcessOperation_WithdrawInsufficientFunds(t *testing.T) {
+func TestProcessOperation_WithdrawInsufficientBalance(t *testing.T) {
 	repo := newMockRepo()
 	uc := NewWalletUseCase(repo)
 	ctx := context.Background()
 	id := uuid.New()
 
-	// Положим меньше, чем потом попробуем снять
 	_, err := uc.ProcessOperation(ctx, id, model.OperationDeposit, 2000)
 	if err != nil {
 		t.Fatalf("unexpected error on deposit: %v", err)

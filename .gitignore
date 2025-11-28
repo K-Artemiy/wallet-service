@@ -1,6 +1,6 @@
 /bin/
 /vendor/
-/.env
+*.env
 *.log
 *.test
 coverage.out
