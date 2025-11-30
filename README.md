@@ -10,8 +10,8 @@
 - goose v3 (миграции)
 - Docker, docker-compose
 
-## Функциональность
-
+## Функциональность 
+Модели выполнены в соответствии с требованиями ТЗ:
 - POST /api/v1/wallets
   - Request:
     - walletId: UUID
